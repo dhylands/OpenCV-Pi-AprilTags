@@ -1,7 +1,7 @@
 # import the necessary packages
 from fps import FPS
-from pivideostream import Pi2VideoStream
-#from imutils.video import VideoStream
+#from pivideostream import Pi2VideoStream
+from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
@@ -25,8 +25,14 @@ app = Flask(__name__)
 
 # initialize the video stream and allow the camera sensor to
 # warmup
-#vs = VideoStream(src=0).start()
-vs = Pi2VideoStream().start()
+vs = VideoStream(src=2)
+
+#cam = cv2.VideoCapture(0)
+#cam.set(cv2.CAP_PROP_FOURCC, cv2.VideoWriter_fourcc('M','J','P','G'))
+
+vs.start()
+#vs.stream = cv2.VideoCapture(0, cv2.CAP_OPENCV_MJPEG)
+#vs = Pi2VideoStream().start()
 time.sleep(2.0)
 
 fps = FPS().start()
@@ -49,6 +55,7 @@ def detect_tags():
     while True:
         # read the next frame from the video stream, resize it,
         # convert the frame to grayscale, and blur it
+        #_, frame = cam.read()
         frame = vs.read()
         if frame is None:
             continue
@@ -103,7 +110,7 @@ def detect_tags():
 
         # grab the current timestamp and draw it on the frame
         timestamp = datetime.datetime.now()
-        text = timestamp.strftime("%A %d %B %Y %I:%M:%S%p") + f' FPS:{fps.fps():5.1f}'
+        text = timestamp.strftime("%A %d %B %Y %I:%M:%S%p") + f' FPS:{fps.fps():5.1f}     '
         cv2.putText(frame, text, (10, frame.shape[0] - 10),
             cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
 
